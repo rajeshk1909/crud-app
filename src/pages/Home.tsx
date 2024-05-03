@@ -173,14 +173,10 @@ const Home = ({ currentUserData, handleLogOut }: Homeprops) => {
         alert("This email already have another admin")
         return
       }
-
-      const id = membersData.length
-        ? Number(membersData[membersData.length - 1]?.id) + 1
-        : 1
-      const newId = id.toString()
-
       const val = {
-        id: newId,
+        id: membersData.length
+        ? Number(membersData[membersData.length - 1]?.id) + 1
+        : 1,
         firstname: value.first_name,
         lastname: value.last_name,
         email: value.email,

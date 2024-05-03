@@ -82,7 +82,7 @@ const LogInPage = ({
             onClick={() => {
               logIn("user")
             }}>
-            User Log In
+             Log In
           </button>
         </div>
       </form>

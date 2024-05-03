@@ -3,7 +3,6 @@ import LogInPage from "../components/LogInPage"
 import SignUpPage from "../components/SignUpPage"
 import { useState } from "react"
 import Home from "./Home"
-import AdminLogin from "../components/AdminLogin"
 import UserData from "../components/UserData"
 import {
   setUserData,
@@ -11,14 +10,9 @@ import {
   userDataRootState,
 } from "../Redux/features/userData"
 import { useDispatch, useSelector } from "react-redux"
-import { adminDataRootState } from "../Redux/features/adminDataSlice"
 
 const SignInPage = () => {
   const dispatch = useDispatch()
-
-  const adminData = useSelector(
-    (state: adminDataRootState) => state.adminData.adminData
-  )
 
   const currentUserData = useSelector(
     (state: userDataRootState) => state.currentUserData.currentUserData
@@ -60,7 +54,10 @@ const SignInPage = () => {
     setLogInVal(val)
   }
   // Handle Log Out
-  const handleLogOut = () => Navigate("/login")
+  const handleLogOut = () => {
+    dispatch(setCurrentUserData([]))
+    Navigate("/login")
+  }
 
   // Set the value input to value (handleUserVal) function
 
@@ -90,30 +87,83 @@ const SignInPage = () => {
     }
   }
 
+  const handleIsSuperAdmin = () => {
+    if (logInVal.email === "superadmin@gmail.com") {
+      if (logInVal.password === "superadmin@123") {
+        return true
+      } else {
+        alert("enter correct password")
+      }
+    } else {
+      return false
+    }
+  }
+
+  const handleIsAdmin = () => {
+    if (logInVal.email === "admin@gmail.com") {
+      if (logInVal.password === "admin@123") {
+        return true
+      } else {
+        alert("enter correct password")
+      }
+    } else {
+      return false
+    }
+  }
+
+  const handleClearUserDatas = () => {
+    const val = {
+      email: "",
+      password: "",
+    }
+    setLogInVal(val)
+  }
+
   // Log in function
 
-  const logIn = (type: string) => {
-    const checkUser = type === "admin" ? adminData : userData
-    if (logInVal.email === "") {
-      alert("please enter email.")
-      return
-    } else if (logInVal.password === "") {
-      alert("Please enter password")
-      return
-    }
-    if (checkUser.length > 0) {
-      const currentUser = checkUser.find(
-        (user: any) => user.email === logInVal.email
-      )
-      if (currentUser && currentUser.email === logInVal.email) {
-        if (currentUser.password === logInVal.password) {
-          type === "admin" ? Navigate("/home") : Navigate("/userdata")
-          dispatch(setCurrentUserData(currentUser))
+  const logIn = () => {
+    const isSuperAdmin = handleIsSuperAdmin()
+    const isAdmin = handleIsAdmin()
+
+    if (isSuperAdmin) {
+      const val = {
+        isSuperAdmin: true,
+      }
+      dispatch(setCurrentUserData(val))
+      Navigate("/home")
+      handleClearUserDatas()
+    } else if (isAdmin) {
+      const val = {
+        isSuperAdmin: false,
+      }
+      dispatch(setCurrentUserData(val))
+      Navigate("/home")
+      handleClearUserDatas()
+    } else {
+      if (logInVal.email === "") {
+        alert("please enter email.")
+        return
+      } else if (logInVal.password === "") {
+        alert("Please enter password")
+        return
+      }
+      if (userData.length > 0) {
+        const currentUser = userData.find(
+          (user: any) => user.email === logInVal.email
+        )
+        if (currentUser && currentUser.email === logInVal.email) {
+          if (currentUser.password === logInVal.password) {
+            Navigate("/userdata")
+            dispatch(setCurrentUserData(currentUser))
+            handleClearUserDatas()
+          } else {
+            alert("Enter correct password")
+          }
         } else {
-          alert("Enter correct password")
+          alert("User not fount.")
         }
       } else {
-        alert(type === "admin" ? "Admin not fount." : "User not fount.")
+        alert("user data not")
       }
     }
   }
@@ -206,18 +256,6 @@ const SignInPage = () => {
               <UserData
                 handleLogOut={handleLogOut}
                 currentUserData={currentUserData}
-              />
-            }
-          />
-          <Route
-            path='adminlogin'
-            element={
-              <AdminLogin
-                showPassword={showPassword}
-                handleShowPassword={handleShowPassword}
-                logIn={logIn}
-                handleLogInChange={handleLogInChange}
-                logInVal={logInVal}
               />
             }
           />

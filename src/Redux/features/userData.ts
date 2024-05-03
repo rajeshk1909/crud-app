@@ -5,7 +5,8 @@ export interface userDataTypes {
     firstname: string,
     lastname: string,
     email: string,
-    password:string,
+    password: string,
+    isSuperAdmin:boolean
 }
 
 export interface userDataState {
