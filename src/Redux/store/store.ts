@@ -8,7 +8,6 @@ import membersDataReducer from "../features/membersData"
 // Combine your reducers
 const rootReducer = combineReducers({
     userData: userDataReducer,
-    currentUserData:userDataReducer,
     membersData:membersDataReducer,
 })
 
@@ -16,7 +15,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["userData","membersData","currentUserData"], // List of reducers to persist
+  whitelist: ["userData","membersData"], // List of reducers to persist
 }
 
 // Create a persisted reducer
